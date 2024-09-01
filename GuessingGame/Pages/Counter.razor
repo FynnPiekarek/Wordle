@@ -1,0 +1,592 @@
+﻿@page "/wordle"
+<style>
+    html,
+    body {
+        background: var(--default);
+    }
+
+    :root {
+        --default: White;
+        --empty: grey;
+        --right: #228B22;
+        --wrong: #FFBF00;
+    }
+
+    #game {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 600px;
+    }
+
+    .grid {
+        margin-top: -300px;
+        display: grid;
+        grid-template-rows: repeat(6, auto);
+        grid-template-columns: repeat(6, auto);
+    }
+
+    .box {
+        width: 60px;
+        height: 60px;
+        border: 2px solid var(--empty);
+        margin: 4px;
+        text-transform: uppercase;
+        display: grid;
+        place-items: center;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 2.4rem;
+    }
+
+        .box.empty {
+            background: var(--empty);
+        }
+
+        .box.wrong {
+            background: var(--wrong);
+        }
+
+        .box.right {
+            background: var(--right);
+        }
+
+    center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    :host {
+        height: var(--keyboard-height);
+    }
+
+    #keyboard {
+        user-select: none;
+        margin-left: 250px;
+        margin-right: 250px;
+        margin-top: -225px;
+        margin-bottom: 100px;
+    }
+
+    .row {
+        display: flex;
+        width: 100%;
+        margin: 0 auto 8px;
+        touch-action: manipulation;
+    }
+
+    .btn_keyboard {
+        font-family: inherit;
+        font-weight: bold;
+        border: 1px solid #333333;
+        padding: 0;
+        margin: 0 6px 0 0;
+        height: 40px;
+        border-radius: 4px;
+        cursor: pointer;
+        user-select: none;
+        background-color: var(--key-bg);
+        color: var(--key-text-color);
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
+    }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.fade {
+            transition: background-color 0.1s ease, color 0.1s ease;
+        }
+
+        button:last-of-type {
+            margin: 0;
+        }
+
+    .half {
+        flex: 0.5;
+    }
+
+    .one {
+        flex: 1;
+    }
+
+    .one-and-a-half {
+        flex: 1.5;
+        font-size: 12px;
+        font-family: inherit;
+        font-weight: bold;
+        border: 1px solid #333333;
+        padding: 0;
+        margin: 0 6px 0 0;
+        height: 40px;
+        border-radius: 4px;
+        cursor: pointer;
+        user-select: none;
+        background-color: var(--key-bg);
+        color: var(--key-text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .two {
+        flex: 2;
+    }
+
+    button.correct {
+        background-color: var(--key-bg-correct);
+        color: var(--key-evaluated-text-color);
+    }
+
+    button.present {
+        background-color: var(--key-bg-present);
+        color: var(--key-evaluated-text-color);
+    }
+
+    button.absent {
+        background-color: var(--key-bg-absent);
+        color: var(--key-evaluated-text-color);
+    }
+
+    .wordle-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .wordle-row {
+        display: flex;
+        gap: 5px;
+    }
+
+    .wordle-input {
+        width: 70px;
+        height: 70px;
+        text-align: center;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+    }
+
+    .gray-keyboard {
+        background-color: #eeeeee;
+        border: 2px solid #333333;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    .btn_newGame_center{
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+
+<h3>Guess the Word Game</h3>
+@if (AllWords == null){
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else{
+
+    @if (state == "won")
+{
+    <div class="modal fade show" id="staticBackdropIfWon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelIfWon" aria-hidden="true" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabelIfWon">You have won!</h5>
+                    <button @onclick="LeaveGame" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height:700px">
+                    <center>
+                        <img src="https://img.freepik.com/vektoren-premium/trophaee-vektor-goldtrophaee-mit-namensschild-des-siegers-des-sportereignisses_68708-621.jpg" style="width:300px; height:300px;" />
+                    </center>
+                </div>
+                <div class="modal-footer btn_newGame_center">
+                    <button class="btn btn-secondary" @onclick="RefreshPage" style="background-color: green">new game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+    @if (state == "lost")
+{
+    <div class="modal fade show" id="staticBackdropIfLose" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelIfLose" aria-hidden="true" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabelIfLose">You have lost!</h5>
+                    <button @onclick="LeaveGame" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>word was @secretWord</p>
+                    <img src="https://i.imgur.com/utDJVae.gif" style="height:500px;" />
+                    <div class="modal-footer btn_newGame_center">
+                        <button class="btn btn-secondary" @onclick="RefreshPage" style="background-color: green">new game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <div id="game" @ref="testRef" @onfocusout="FocusLost" tabindex="0" @onkeydown="HandleKeyPress" style="outline: none;">
+        <div class="grid">
+            @for (int i = 0; i < 6; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    @DrawBox(i, j, grid[i, j])
+                }
+            }
+        </div>
+    </div>
+    <div id="keyboard" class="gray-keyboard">
+        <div class="row">
+            <button class="btn_keyboard" @onclick='() => AddLetter("Q")' data-key='Q'>Q</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("W")' data-key='W'>W</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("E")' data-key='E'>E</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("R")' data-key='R'>R</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("T")' data-key='T'>T</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("Z")' data-key='Z'>Z</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("U")' data-key='U'>U</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("I")' data-key='I'>I</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("O")' data-key='O'>O</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("P")' data-key='P'>P</button>
+        </div>
+        <div class="row">
+            <div class="spacer half"></div>
+            <button class="btn_keyboard" @onclick='() => AddLetter("A")' data-key='A'>A</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("S")' data-key='S'>S</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("D")' data-key='D'>D</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("F")' data-key='F'>F</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("G")' data-key='G'>G</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("H")' data-key='H'>H</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("J")' data-key='J'>J</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("K")' data-key='K'>K</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("L")' data-key='L'>L</button>
+            <div class="spacer half"></div>
+        </div>
+        <div class="row">
+            <button @onclick="CheckWord" data-key='↵' class="one-and-a-half"><h2><b>↵</b></h2></button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("Y")' data-key='Y'>Y</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("X")' data-key='X'>X</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("C")' data-key='C'>C</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("V")' data-key='V'>V</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("B")' data-key='B'>B</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("N")' data-key='N'>N</button>
+            <button class="btn_keyboard" @onclick='() => AddLetter("M")' data-key='M'>M</button>
+            <button @onclick="RemoveLetter" data-key='←' class="one-and-a-half"><h2><b>←</b></h2></button>
+        </div>
+    </div>
+    <div style="@($"display: none; {styleVersion}")">
+    @foreach (var style in addedStyles)
+    {
+        <style>
+            @style
+        </style>
+    }
+</div>
+
+}
+
+@code {
+
+    private string[,] grid = new string[6, 6];
+    private int currentRow = 0;
+    private int currentColumn = 0;
+    private ElementReference testRef;
+    string guessWord = "";
+    string secretWord = "";
+    private string[,] boxStatus = new string[6, 6];
+    string state = "playing";
+    private List<string> AllWords { get; set; }
+    private List<char> CorrectLetters = new List<char>();
+    private List<char> PresentLetters = new List<char>();
+    private List<char> AbsentLetters = new List<char>();
+    private List<string> addedStyles = new List<string>();
+    private int styleVersion = 0;
+
+    // Initialize the event listener
+    private EventCallback<KeyboardEventArgs> OnKeyDownEvent => EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyPress);
+    private void LeaveGame(){
+        state = "playing";
+    }
+    private void DrawGrid()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                grid[i, j] = "";
+            }
+        }
+    }
+
+    private RenderFragment DrawBox(int row, int column, string letter)
+    {
+        return builder =>
+        {
+            builder.OpenElement(0, "div");
+            builder.AddAttribute(1, "class", $"box {boxStatus[row, column]}");
+            builder.AddAttribute(2, "style", "width: 60px; height: 60px; border: 2px solid var(--empty); margin: 4px; text-transform: uppercase; display: grid; place-items: center; font-family: Arial, Helvetica, sans-serif; font-size: 2.4rem;");
+            builder.AddAttribute(3, "id", $"box-{row}-{column}");
+            builder.AddContent(4, letter);
+            builder.CloseElement();
+        };
+    }
+    private void ChangeButtonColor()
+    {
+        foreach (char letter in AbsentLetters)
+        {
+            ChangeButtonColorInternal(letter, "absent");
+        }
+        foreach (char letter in CorrectLetters)
+        {
+            ChangeButtonColorInternal(letter, "correct");
+        }
+        foreach (char letter in PresentLetters)
+        {
+            ChangeButtonColorInternal(letter, "present");
+        }
+    }
+
+    private void ChangeButtonColorInternal(char letter, string status)
+    {
+        var buttonSelector = $"button[data-key='{letter}']";
+        switch (status)
+        {
+            case "absent":
+                ApplyButtonStyles(buttonSelector, "grey", "var(--key-evaluated-text-color)");
+                Console.WriteLine("3");
+                break;
+            case "present":
+                ApplyButtonStyles(buttonSelector, "#FFBF00", "var(--key-evaluated-text-color)");
+                Console.WriteLine("2");
+                break;
+            case "correct":
+                ApplyButtonStyles(buttonSelector, "#228B22", "var(--key-evaluated-text-color)");
+                Console.WriteLine("1");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ApplyButtonStyles(string buttonSelector, string backgroundColor, string textColor)
+    {
+        var style = $"{buttonSelector} {{ background-color: {backgroundColor}; color: {textColor}; }}";
+        AddOrUpdateStyleTag(style);
+        styleVersion++; // Increment the version to signal a change
+    }
+
+    private void AddOrUpdateStyleTag(string style)
+    {
+        if (!addedStyles.Contains(style))
+        {
+            addedStyles.Add(style);
+        }
+    }
+
+
+
+
+    private void AddLetter(string letter)
+    {
+        if (state != "won") {
+            if (currentColumn < 6)
+            {
+                guessWord += letter;
+                grid[currentRow, currentColumn] = letter;
+                currentColumn++;
+                UpdateGrid();
+            }
+        }
+    }
+
+    private void RemoveLetter()
+    {
+        if (state != "won" || state !="lost")
+        {
+            if (currentColumn > 0)
+            {
+                guessWord = guessWord.Substring(0, guessWord.Length - 1);
+                currentColumn--;
+                grid[currentRow, currentColumn] = "";
+                UpdateGrid();
+            }
+        }
+    }
+    private async Task GetWord()
+    {
+        try
+        {
+            var apiResponse = await httpClient.GetStringAsync("https://random-word-api.herokuapp.com/word?length=6");
+            secretWord = apiResponse.Trim('[', ']').Replace("\"", "").ToUpper();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task GetAllWords()
+    {
+        try
+        {
+            var apiResponse = await httpClient.GetStringAsync("https://random-word-api.herokuapp.com/all");
+            AllWords = JsonConvert.DeserializeObject<List<string>>(apiResponse)
+                .Select(word => word.ToUpper())
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private void CheckWord() {
+        if (currentColumn <= 5) return;
+        if (!AllWords.Contains(guessWord)) {
+            Console.WriteLine("Enthält Wort nicht");
+            return;
+        }
+        Dictionary<char, int> letterMap = new Dictionary<char, int>();
+        int CorrectLetterCount = 0;
+        foreach (char c in secretWord)
+        {
+            if (letterMap.ContainsKey(c))
+                letterMap[c]++;
+            else
+                letterMap[c] = 1;
+        }
+        for (int i = 0; i < secretWord.Length; i++)
+        {
+            char secretChar = secretWord[i];
+            char guessChar = guessWord[i];
+
+            if (secretChar == guessChar)
+            {
+                letterMap[guessChar]--;
+                CorrectLetterCount++;
+                boxStatus[currentRow, i] = "right";
+                CorrectLetters.Add(guessChar);
+            }
+            if (CorrectLetterCount == 6)
+            {
+                state = "won";
+                return;
+            }
+        }
+        for (int i = 0; i < guessWord.Length; i++)
+        {
+            if (boxStatus[currentRow, i] == "right") continue;
+            char guessChar = guessWord[i];
+            if (!letterMap.ContainsKey(guessChar) || letterMap[guessChar]==0) {
+                boxStatus[currentRow, i] = "empty";
+                AbsentLetters.Add(guessChar);
+            } else {
+                letterMap[guessChar]--;
+                boxStatus[currentRow, i] = "wrong";
+                PresentLetters.Add(guessChar);
+            }
+        }
+        if (currentRow == 5)
+        {
+            state = "lost";
+            return;
+        }
+        guessWord = "";
+        currentRow++;
+        currentColumn = 0;
+        UpdateGrid();
+        ChangeButtonColor();
+    }
+
+    private bool IsLetter(string key)
+    {
+        return key.Length == 1 && char.IsLetter(key[0]);
+    }
+
+    private void UpdateGrid()
+    {
+        StateHasChanged();
+    }
+    private void RefreshPage()
+    {
+        NavigationManager.NavigateTo("/wordle", forceLoad: true);
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        string key = e.Key.ToLower();
+
+        if (key == "enter")
+        {
+            if (currentColumn > 5)
+            {
+                CheckWord();
+            }
+        }
+        else if (key == "backspace")
+        {
+            if (currentColumn != 0)
+            {
+                RemoveLetter();
+            }
+        }
+        else if (IsLetter(key))
+        {
+            AddLetter(key.ToUpper());
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await GetWord();
+        await GetAllWords();
+    }
+
+    protected override void OnInitialized()
+    {
+        //DrawGrid();
+        // Add event listener for keydown
+        JSRuntime.InvokeVoidAsync("addEventListener", "keydown", DotNetObjectReference.Create(this), OnKeyDownEvent);
+    }
+
+    protected override bool ShouldRender()
+    {
+        return true;
+    }
+    //Input + interaktives keyboard + anzeige + anzeige refresh + kontrolle
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AllWords != null)
+        {
+            await testRef.FocusAsync();
+        }
+    }
+
+    private async Task FocusLost()
+    {
+        await testRef.FocusAsync();
+    }
+}
