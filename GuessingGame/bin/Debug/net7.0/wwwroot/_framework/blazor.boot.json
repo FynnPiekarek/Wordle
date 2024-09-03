@@ -1,7 +1,7 @@
 {
   "entryAssembly": "GuessingGame",
   "resources": {
-    "hash": "sha256-llFgQPHcvfxb2mFVOZO0wuh/hP7ycorWfaNMo0RPUpQ=",
+    "hash": "sha256-va7QznrSFyNU+yP/+zKYeGxCqS2kRkwlM2BCRk48Loc=",
     "runtime": {
       "dotnet.7.0.16.kzkv3zxir0.js": "sha256-4BiArKugJJtpQrznGF5zWfmJ2TB98+p6rKsyoqhtMk4=",
       "dotnet.timezones.blat": "sha256-rwyJqJu36keQwNmm/O1XV7tnkkVldIOK8GIjn4gTUt4=",
@@ -204,10 +204,10 @@
       "mscorlib.dll": "sha256-7yxnoj0sx/xIMKjSCkfYzaeQKDj1UsUSr/JXW7fRggs=",
       "netstandard.dll": "sha256-c9xgB5oQro5/rBTTHeD+4cqLi9QOB+6fhaP3jmkeGo4=",
       "System.Private.CoreLib.dll": "sha256-FGXoQzMt7mcWfUZbWXoXgg8tPIt7PF+QZoXXBQWegAQ=",
-      "GuessingGame.dll": "sha256-jEW1pZ/NzA8D1ulRHQL63cRX6GRg1TdBaWl04F65wtE="
+      "GuessingGame.dll": "sha256-sLMH1D36lDF3MMfM50jbFHzAUqtZgINERg91pEasMtk="
     },
     "pdb": {
-      "GuessingGame.pdb": "sha256-ttZQAbUThi69hqkAld8UOS28IJ3Z209qRgy/hQBRvC4="
+      "GuessingGame.pdb": "sha256-FpLTYDsiPNu82DyckG1KDne/z17M5MW4K63OIFaAqac="
     },
     "runtimeAssets": {
       "dotnet.wasm": {

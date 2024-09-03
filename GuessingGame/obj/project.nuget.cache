@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ha5He9H4cSczG6IuEZzTw9s8LhFq6mg2I3Ux03whzN2kmJybT3EpjITRmpjTatsc4/CF4RO6uAabhsoucO671w==",
+  "dgSpecHash": "745IpIf7t60+jCytrqcCROwhwNqOZog2SSO4dDREGKN+PIk+e+VN1g4Xwgztyab3/s0aJLNjUoIqGRpLMXEwbA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\fynnp\\OneDrive - sluz\\IPT5.1\\Wordle\\GuessingGame\\GuessingGame.csproj",
+  "projectFilePath": "C:\\Users\\fynnp\\OneDrive\\Dokumente\\github\\Wordle\\GuessingGame\\GuessingGame.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\fynnp\\.nuget\\packages\\blazor.bootstrap\\3.0.0\\blazor.bootstrap.3.0.0.nupkg.sha512",
     "C:\\Users\\fynnp\\.nuget\\packages\\microsoft.aspnetcore.authorization\\7.0.14\\microsoft.aspnetcore.authorization.7.0.14.nupkg.sha512",

@@ -2083,11 +2083,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\fynnp\\OneDrive - sluz\\IPT5.1\\Wordle\\GuessingGame\\GuessingGame.csproj",
+      "projectUniqueName": "C:\\Users\\fynnp\\OneDrive\\Dokumente\\github\\Wordle\\GuessingGame\\GuessingGame.csproj",
       "projectName": "GuessingGame",
-      "projectPath": "C:\\Users\\fynnp\\OneDrive - sluz\\IPT5.1\\Wordle\\GuessingGame\\GuessingGame.csproj",
+      "projectPath": "C:\\Users\\fynnp\\OneDrive\\Dokumente\\github\\Wordle\\GuessingGame\\GuessingGame.csproj",
       "packagesPath": "C:\\Users\\fynnp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\fynnp\\OneDrive - sluz\\IPT5.1\\Wordle\\GuessingGame\\obj\\",
+      "outputPath": "C:\\Users\\fynnp\\OneDrive\\Dokumente\\github\\Wordle\\GuessingGame\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\fynnp\\AppData\\Roaming\\NuGet\\NuGet.Config",
